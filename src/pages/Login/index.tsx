@@ -11,6 +11,7 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import getValidationErrors from '../../utils/getValidationErrors';
 import { useAuth } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 
 interface LoginFormData {
   email: string;
@@ -20,6 +21,7 @@ interface LoginFormData {
 export const Login: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { login } = useAuth();
+  const { addToast } = useToast();
 
   const handleSubmit = useCallback(
     async (data: LoginFormData) => {
@@ -42,10 +44,16 @@ export const Login: React.FC = () => {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
           formRef.current?.setErrors(errors);
+          return;
         }
+        addToast({
+          title: 'Login failed',
+          type: 'error',
+          description: 'Please check your credentials',
+        });
       }
     },
-    [login],
+    [login, addToast],
   );
 
   return (
