@@ -4,7 +4,8 @@ import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
-import { Container, Content, Background } from './styles';
+import { Link, useHistory } from 'react-router-dom';
+import { Container, Content, Background, AnimationContent } from './styles';
 
 import logoImg from '../../assets/logo.svg';
 import Button from '../../components/Button';
@@ -22,6 +23,7 @@ export const Login: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { login } = useAuth();
   const { addToast } = useToast();
+  const history = useHistory();
 
   const handleSubmit = useCallback(
     async (data: LoginFormData) => {
@@ -40,6 +42,8 @@ export const Login: React.FC = () => {
           email: data.email,
           password: data.password,
         });
+
+        history.push('/dashboard');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -53,28 +57,30 @@ export const Login: React.FC = () => {
         });
       }
     },
-    [login, addToast],
+    [login, addToast, history],
   );
 
   return (
     <Container>
       <Content>
-        <img src={logoImg} alt="GoBarber" />
+        <AnimationContent>
+          <img src={logoImg} alt="GoBarber" />
 
-        <Form ref={formRef} onSubmit={handleSubmit}>
-          <h1>Please Log in</h1>
+          <Form ref={formRef} onSubmit={handleSubmit}>
+            <h1>Please Log in</h1>
 
-          <Input name="email" placeholder="E-mail" icon={FiMail} />
-          <Input name="password" type="password" placeholder="Password" icon={FiLock} />
-          <Button type="submit">LogIn</Button>
+            <Input name="email" placeholder="E-mail" icon={FiMail} />
+            <Input name="password" type="password" placeholder="Password" icon={FiLock} />
+            <Button type="submit">LogIn</Button>
 
-          <a href="forgot">Forgot my password</a>
-        </Form>
+            <Link to="forgot">Forgot my password</Link>
+          </Form>
 
-        <a href="signup">
-          <FiLogIn />
-          Sign Up
-        </a>
+          <Link to="signup">
+            <FiLogIn />
+            Sign Up
+          </Link>
+        </AnimationContent>
       </Content>
       <Background />
     </Container>
